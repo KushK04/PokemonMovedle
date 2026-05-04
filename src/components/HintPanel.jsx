@@ -30,7 +30,7 @@ function BattleImage({ displayName }) {
     return <p className="hint-text hint-muted">Screenshot not available for this move.</p>;
   }
 
-  const slug = displayName.replace(/ /g, '_');
+  const slug = displayName.replace(/ /g, '_').replace(/[^\w\-]/g, c => encodeURIComponent(c));
   const src  = `https://archives.bulbagarden.net/wiki/Special:FilePath/${slug}_${GENS[genIdx]}.png`;
 
   return (
@@ -46,7 +46,14 @@ function BattleImage({ displayName }) {
         alt={`${displayName} in battle`}
         className="hint-gif"
         style={!loaded ? { position: 'absolute', opacity: 0, pointerEvents: 'none' } : {}}
-        onLoad={() => setLoaded(true)}
+        onLoad={e => {
+          if (e.target.naturalWidth === 0) {
+            if (genIdx < GENS.length - 1) setGenIdx(i => i + 1);
+            else setFailed(true);
+          } else {
+            setLoaded(true);
+          }
+        }}
         onError={() => {
           setLoaded(false);
           if (genIdx < GENS.length - 1) setGenIdx(i => i + 1);
