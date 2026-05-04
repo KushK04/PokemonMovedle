@@ -1,42 +1,60 @@
 import { useState, useEffect } from 'react';
-import { fetchMoveGif } from '../utils/bulbapedia';
 
 const HINTS = [
-  { id: 'effect',      label: 'Effect',           icon: '📖', threshold: 1 },
-  { id: 'flavor',      label: 'Flavor Text',       icon: '💬', threshold: 2 },
-  { id: 'animation',   label: 'In Battle',          icon: '🎬', threshold: 3 },
-  { id: 'silhouettes', label: 'Who learns it?',    icon: '👤', threshold: 4 },
+  { id: 'effect',      label: 'Effect',        icon: '📖', threshold: 1 },
+  { id: 'flavor',      label: 'Flavor Text',   icon: '💬', threshold: 2 },
+  { id: 'animation',   label: 'In Battle',     icon: '🎬', threshold: 3 },
+  { id: 'silhouettes', label: 'Who learns it?', icon: '👤', threshold: 4 },
 ];
 
 const SPRITE = id =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
+// Try newest generation first, fall back through older ones via onError.
+// Uses Special:FilePath which is a stable redirect — no JS fetch needed,
+// so there are no CORS restrictions.
+const GENS = ['IX', 'VIII', 'VII', 'VI', 'V', 'IV', 'III', 'II', 'I'];
+
+function BattleImage({ displayName }) {
+  const [genIdx, setGenIdx] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setGenIdx(0);
+    setLoaded(false);
+    setFailed(false);
+  }, [displayName]);
+
+  if (failed) {
+    return <p className="hint-text hint-muted">Screenshot not available for this move.</p>;
+  }
+
+  const slug = displayName.replace(/ /g, '_');
+  const src  = `https://archives.bulbagarden.net/wiki/Special:FilePath/${slug}_${GENS[genIdx]}.png`;
+
+  return (
+    <div className="hint-gif-wrap">
+      {!loaded && <div className="spinner-sm" />}
+      <img
+        key={src}
+        src={src}
+        alt={`${displayName} in battle`}
+        className="hint-gif"
+        style={{ display: loaded ? 'block' : 'none' }}
+        onLoad={() => setLoaded(true)}
+        onError={() => {
+          setLoaded(false);
+          if (genIdx < GENS.length - 1) setGenIdx(i => i + 1);
+          else setFailed(true);
+        }}
+      />
+    </div>
+  );
+}
+
 export default function HintPanel({ targetMove, guessCount, gameStatus }) {
-  const [gifUrl, setGifUrl]       = useState(null);   // null=unfetched, false=not found, string=url
-  const [gifLoading, setGifLoading] = useState(false);
-
   const gameOver = gameStatus !== 'playing';
-
-  // Pre-fetch GIF one guess before it reveals so it's ready
-  useEffect(() => {
-    if (!targetMove) return;
-    const shouldFetch = guessCount >= 2 || gameOver;
-    if (!shouldFetch || gifUrl !== null) return;
-
-    let cancelled = false;
-    setGifLoading(true);
-    fetchMoveGif(targetMove.displayName)
-      .then(url  => { if (!cancelled) setGifUrl(url ?? false); })
-      .finally(() => { if (!cancelled) setGifLoading(false); });
-
-    return () => { cancelled = true; };
-  }, [targetMove?.name, guessCount >= 2 || gameOver]);
-
-  // Reset when the move changes (reroll)
-  useEffect(() => {
-    setGifUrl(null);
-    setGifLoading(false);
-  }, [targetMove?.name]);
 
   if (!targetMove) return null;
 
@@ -70,15 +88,7 @@ export default function HintPanel({ targetMove, guessCount, gameStatus }) {
                 )}
 
                 {hint.id === 'animation' && (
-                  gifLoading ? (
-                    <div className="hint-spinner-wrap"><div className="spinner-sm" /></div>
-                  ) : gifUrl ? (
-                    <div className="hint-gif-wrap">
-                      <img src={gifUrl} alt={`${targetMove.displayName} animation`} className="hint-gif" />
-                    </div>
-                  ) : (
-                    <p className="hint-text hint-muted">Animation not available for this move.</p>
-                  )
+                  <BattleImage displayName={targetMove.displayName} />
                 )}
 
                 {hint.id === 'silhouettes' && (
