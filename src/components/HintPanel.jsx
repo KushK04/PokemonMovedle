@@ -34,14 +34,18 @@ function BattleImage({ displayName }) {
   const src  = `https://archives.bulbagarden.net/wiki/Special:FilePath/${slug}_${GENS[genIdx]}.png`;
 
   return (
-    <div className="hint-gif-wrap">
-      {!loaded && <div className="spinner-sm" />}
+    <div className="hint-gif-wrap" style={{ position: 'relative' }}>
+      {!loaded && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '0.25rem 0' }}>
+          <div className="spinner-sm" />
+        </div>
+      )}
       <img
         key={src}
         src={src}
         alt={`${displayName} in battle`}
         className="hint-gif"
-        style={{ display: loaded ? 'block' : 'none' }}
+        style={!loaded ? { position: 'absolute', opacity: 0, pointerEvents: 'none' } : {}}
         onLoad={() => setLoaded(true)}
         onError={() => {
           setLoaded(false);

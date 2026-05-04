@@ -69,7 +69,7 @@ export function useMoveData() {
       ? effectEntry.short_effect.replace(/\$effect_chance/g, data.effect_chance ?? '??')
       : null;
 
-    const UNUSABLE = /can't be used|unusable/i;
+    const UNUSABLE = /can[’']t be used|unusable/i;
     const enFlavors = data.flavor_text_entries.filter(
       e => e.language.name === 'en' && !UNUSABLE.test(e.flavor_text)
     );
