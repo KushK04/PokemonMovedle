@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import MoveInput from './components/MoveInput';
 import GuessTable from './components/GuessTable';
+import HintPanel from './components/HintPanel';
 import HowToPlayModal from './components/HowToPlayModal';
 import ResultModal from './components/ResultModal';
 import { useMoveData } from './hooks/useMoveData';
@@ -92,6 +93,12 @@ export default function App() {
             </div>
 
             <GuessTable guesses={guesses} />
+
+            <HintPanel
+              targetMove={targetMove}
+              guessCount={guesses.length}
+              gameStatus={gameStatus}
+            />
 
             {gameStatus === 'playing' && (
               <MoveInput
