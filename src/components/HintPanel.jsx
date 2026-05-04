@@ -4,7 +4,7 @@ import { fetchMoveGif } from '../utils/bulbapedia';
 const HINTS = [
   { id: 'effect',      label: 'Effect',           icon: '📖', threshold: 1 },
   { id: 'flavor',      label: 'Flavor Text',       icon: '💬', threshold: 2 },
-  { id: 'animation',   label: 'Battle Animation',  icon: '🎬', threshold: 3 },
+  { id: 'animation',   label: 'In Battle',          icon: '🎬', threshold: 3 },
   { id: 'silhouettes', label: 'Who learns it?',    icon: '👤', threshold: 4 },
 ];
 

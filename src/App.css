@@ -375,9 +375,8 @@
 }
 
 .hint-gif {
-  max-width: 220px;
-  max-height: 180px;
-  image-rendering: pixelated;
+  max-width: 280px;
+  max-height: 210px;
   border-radius: 4px;
 }
 
