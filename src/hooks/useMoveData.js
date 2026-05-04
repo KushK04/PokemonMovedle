@@ -52,7 +52,7 @@ export function useMoveData() {
   }
 
   async function fetchMoveDetails(moveEntry) {
-    const cacheKey = `pmdle_move_v2_${moveEntry.name}`;
+    const cacheKey = `pmdle_move_v3_${moveEntry.name}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) return JSON.parse(cached);
 
@@ -69,7 +69,10 @@ export function useMoveData() {
       ? effectEntry.short_effect.replace(/\$effect_chance/g, data.effect_chance ?? '??')
       : null;
 
-    const enFlavors = data.flavor_text_entries.filter(e => e.language.name === 'en');
+    const UNUSABLE = /can't be used|unusable/i;
+    const enFlavors = data.flavor_text_entries.filter(
+      e => e.language.name === 'en' && !UNUSABLE.test(e.flavor_text)
+    );
     const flavorText = enFlavors.length > 0
       ? enFlavors[enFlavors.length - 1].flavor_text.replace(/[\n\f\r]/g, ' ').replace(/\s+/g, ' ').trim()
       : null;

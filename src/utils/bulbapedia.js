@@ -1,71 +1,50 @@
 const API    = 'https://bulbapedia.bulbagarden.net/w/api.php';
-const PREFIX = 'pmdle_bgif_v1_';
+const PREFIX = 'pmdle_bgif_v2_';
+
+// Higher = newer generation = preferred
+const GEN_SCORE = { IX: 9, VIII: 8, VII: 7, VI: 6, V: 5, IV: 4, III: 3, II: 2, I: 1 };
+
+function scoreGen(name) {
+  for (const [roman, score] of Object.entries(GEN_SCORE)) {
+    if (name.includes(roman)) return score;
+  }
+  return 0;
+}
 
 export async function fetchMoveGif(moveDisplayName) {
   const cacheKey = PREFIX + moveDisplayName;
   const cached = localStorage.getItem(cacheKey);
-  if (cached !== null) return JSON.parse(cached); // may be null (not found) or a URL string
+  if (cached !== null) return JSON.parse(cached);
 
   try {
-    const pageTitle = `${moveDisplayName} (move)`;
+    // Strip everything except letters and numbers to match Bulbapedia CamelCase filenames
+    // e.g. "Fire Punch" -> "FirePunch", "Trick-or-Treat" -> "TrickorTreat"
+    const prefix = moveDisplayName.replace(/[^a-zA-Z0-9]/g, '');
 
-    // Step 1 — get image list for the move page
-    const listParams = new URLSearchParams({
-      action:  'query',
-      titles:  pageTitle,
-      prop:    'images',
-      imlimit: '100',
-      format:  'json',
-      origin:  '*',
+    const params = new URLSearchParams({
+      action:   'query',
+      list:     'allimages',
+      aiprefix: prefix,
+      aiprop:   'url|name',
+      ailimit:  '20',
+      format:   'json',
+      origin:   '*',
     });
 
-    const listRes  = await fetch(`${API}?${listParams}`);
-    const listData = await listRes.json();
-    const pages    = Object.values(listData.query.pages);
-    const allImages = pages[0]?.images ?? [];
+    const res  = await fetch(`${API}?${params}`);
+    const data = await res.json();
 
-    // Only keep GIFs
-    const gifs = allImages.map(img => img.title).filter(t => t.toLowerCase().endsWith('.gif'));
+    const all  = data.query?.allimages ?? [];
+    const gifs = all.filter(img => img.name.toLowerCase().endsWith('.gif'));
 
-    // Prefer GIFs whose filename contains the (normalised) move name
-    const slug = moveDisplayName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const ranked = [
-      ...gifs.filter(t => t.toLowerCase().replace(/[^a-z0-9]/g, '').includes(slug)),
-      ...gifs.filter(t => !t.toLowerCase().replace(/[^a-z0-9]/g, '').includes(slug)),
-    ];
-
-    if (ranked.length === 0) {
+    if (gifs.length === 0) {
       localStorage.setItem(cacheKey, JSON.stringify(null));
       return null;
     }
 
-    // Among matching GIFs, prefer newer generations (longer roman-numeral suffix)
-    const best = ranked.sort((a, b) => {
-      const score = t => {
-        if (t.includes('IX')) return 9;
-        if (t.includes('VIII')) return 8;
-        if (t.includes('VII')) return 7;
-        if (t.includes('VI'))  return 6;
-        if (t.includes('V'))   return 5;
-        return 0;
-      };
-      return score(b) - score(a);
-    })[0];
-
-    // Step 2 — resolve file title to a direct URL
-    const urlParams = new URLSearchParams({
-      action:  'query',
-      titles:  best,
-      prop:    'imageinfo',
-      iiprop:  'url',
-      format:  'json',
-      origin:  '*',
-    });
-
-    const urlRes  = await fetch(`${API}?${urlParams}`);
-    const urlData = await urlRes.json();
-    const filePages = Object.values(urlData.query.pages);
-    const url = filePages[0]?.imageinfo?.[0]?.url ?? null;
+    // Pick the newest-generation GIF
+    const best = gifs.sort((a, b) => scoreGen(b.name) - scoreGen(a.name))[0];
+    const url  = best.url ?? null;
 
     localStorage.setItem(cacheKey, JSON.stringify(url));
     return url;
