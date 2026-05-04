@@ -9,11 +9,13 @@ export default function AttributeCell({ column, data }) {
   if (column === 'type') {
     const colors = TYPE_COLORS[value] ?? { bg: '#888', text: '#fff' };
     return (
-      <td
-        className="cell cell-type"
-        style={{ backgroundColor: colors.bg, color: colors.text }}
-      >
-        {value ? value.charAt(0).toUpperCase() + value.slice(1) : '—'}
+      <td className={`cell cell-${status}`}>
+        <span
+          className="type-badge"
+          style={{ backgroundColor: colors.bg, color: colors.text }}
+        >
+          {value ? value.charAt(0).toUpperCase() + value.slice(1) : '—'}
+        </span>
       </td>
     );
   }

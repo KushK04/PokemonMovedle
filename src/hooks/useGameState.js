@@ -17,14 +17,16 @@ function loadSaved() {
 
 export function useGameState() {
   const saved = loadSaved();
-  const [guesses, setGuesses] = useState(saved?.guesses ?? []);
-  const [gameStatus, setGameStatus] = useState(saved?.gameStatus ?? 'playing');
+  const [guesses, setGuesses]             = useState(saved?.guesses ?? []);
+  const [gameStatus, setGameStatus]       = useState(saved?.gameStatus ?? 'playing');
+  const [activeMoveIndex, setActiveMoveIndex] = useState(saved?.activeMoveIndex ?? null);
 
-  function persist(newGuesses, newStatus) {
+  function persist(newGuesses, newStatus, newIndex) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       date: getTodayKey(),
       guesses: newGuesses,
       gameStatus: newStatus,
+      activeMoveIndex: newIndex,
     }));
   }
 
@@ -38,13 +40,20 @@ export function useGameState() {
 
     setGuesses(newGuesses);
     setGameStatus(newStatus);
-    persist(newGuesses, newStatus);
+    persist(newGuesses, newStatus, activeMoveIndex);
     return newStatus;
+  }
+
+  function resetGame(newMoveIndex) {
+    setGuesses([]);
+    setGameStatus('playing');
+    setActiveMoveIndex(newMoveIndex);
+    persist([], 'playing', newMoveIndex);
   }
 
   function alreadyGuessed(moveName) {
     return guesses.some(g => g.name.toLowerCase() === moveName.toLowerCase());
   }
 
-  return { guesses, gameStatus, addGuess, alreadyGuessed, maxGuesses: MAX_GUESSES };
+  return { guesses, gameStatus, activeMoveIndex, addGuess, alreadyGuessed, resetGame, maxGuesses: MAX_GUESSES };
 }

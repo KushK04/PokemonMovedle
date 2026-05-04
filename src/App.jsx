@@ -6,13 +6,13 @@ import HowToPlayModal from './components/HowToPlayModal';
 import ResultModal from './components/ResultModal';
 import { useMoveData } from './hooks/useMoveData';
 import { useGameState } from './hooks/useGameState';
-import { getDailyIndex } from './utils/dailyMove';
+import { getDailyIndex, getRandomIndex } from './utils/dailyMove';
 import { compareMove } from './utils/comparison';
 import './App.css';
 
 export default function App() {
   const { moves, loading, error, fetchMoveDetails } = useMoveData();
-  const { guesses, gameStatus, addGuess, alreadyGuessed, maxGuesses } = useGameState();
+  const { guesses, gameStatus, activeMoveIndex, addGuess, alreadyGuessed, resetGame, maxGuesses } = useGameState();
 
   const [targetMove, setTargetMove] = useState(null);
   const [showHelp, setShowHelp]     = useState(false);
@@ -21,9 +21,10 @@ export default function App() {
 
   useEffect(() => {
     if (moves.length === 0) return;
-    const idx = getDailyIndex(moves.length);
+    const idx = activeMoveIndex ?? getDailyIndex(moves.length);
+    setTargetMove(null);
     fetchMoveDetails(moves[idx]).then(setTargetMove);
-  }, [moves]);
+  }, [moves, activeMoveIndex]);
 
   async function handleGuess(moveEntry) {
     if (!targetMove) return;
@@ -43,12 +44,19 @@ export default function App() {
     }
   }
 
+  function handleReroll() {
+    if (guesses.length > 0 && !window.confirm('Reroll the puzzle? Your current progress will be lost.')) return;
+    const currentIdx = activeMoveIndex ?? getDailyIndex(moves.length);
+    resetGame(getRandomIndex(moves.length, currentIdx));
+    setShowResult(false);
+  }
+
   const guessesLeft = maxGuesses - guesses.length;
   const isDisabled  = guessing || gameStatus !== 'playing' || !targetMove;
 
   return (
     <div className="app">
-      <Header onHelpClick={() => setShowHelp(true)} />
+      <Header onHelpClick={() => setShowHelp(true)} onReroll={handleReroll} />
 
       <main className="main">
         {loading && (

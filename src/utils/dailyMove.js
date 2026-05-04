@@ -15,3 +15,9 @@ export function getTodayKey() {
 export function getDailyIndex(totalMoves) {
   return hashString(getTodayKey()) % totalMoves;
 }
+
+export function getRandomIndex(totalMoves, exclude) {
+  let idx;
+  do { idx = Math.floor(Math.random() * totalMoves); } while (idx === exclude);
+  return idx;
+}

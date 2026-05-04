@@ -1,8 +1,10 @@
-export default function Header({ onHelpClick }) {
+export default function Header({ onHelpClick, onReroll }) {
   return (
     <header className="header">
       <div className="header-inner">
-        <div className="header-spacer" />
+        <button className="reroll-btn" onClick={onReroll} aria-label="Reroll puzzle" title="Reroll puzzle">
+          🎲
+        </button>
         <h1 className="header-title">
           <span className="title-pokemon">Pokemon</span>
           <span className="title-movedle"> MoveDle</span>

@@ -35,7 +35,6 @@
   margin: 0 auto;
 }
 
-.header-spacer { width: 36px; }
 
 .header-title {
   font-size: 1.5rem;
@@ -47,7 +46,8 @@
 .title-pokemon { color: var(--accent2); }
 .title-movedle  { color: var(--accent); }
 
-.help-btn {
+.help-btn,
+.reroll-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -61,7 +61,8 @@
   justify-content: center;
   transition: background 0.15s, border-color 0.15s;
 }
-.help-btn:hover { background: var(--border); border-color: var(--accent); }
+.help-btn:hover   { background: var(--border); border-color: var(--accent); }
+.reroll-btn:hover { background: var(--border); border-color: var(--accent2); }
 
 /* ─── Loading ─── */
 .loading {
@@ -166,7 +167,14 @@
   text-overflow: ellipsis;
 }
 
-.cell-type { font-weight: 700; font-size: 0.8rem; }
+.type-badge {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
 
 .cell-correct { background: var(--correct); color: #fff; }
 .cell-wrong   { background: var(--wrong);   color: var(--text-muted); }
