@@ -1,0 +1,390 @@
+/* ─── Layout ─── */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 4rem;
+  gap: 1.25rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+.header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  padding: 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header-spacer { width: 36px; }
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  user-select: none;
+}
+
+.title-pokemon { color: var(--accent2); }
+.title-movedle  { color: var(--accent); }
+
+.help-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.help-btn:hover { background: var(--border); border-color: var(--accent); }
+
+/* ─── Loading ─── */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: var(--text-muted);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-msg {
+  color: #f07070;
+  padding: 1rem;
+  background: rgba(200, 50, 50, 0.15);
+  border: 1px solid rgba(200, 50, 50, 0.3);
+  border-radius: var(--radius);
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* ─── Status row ─── */
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-text { color: var(--text-muted); font-size: 0.9rem; }
+
+.reveal-btn {
+  padding: 0.3rem 0.8rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.reveal-btn:hover { background: var(--border); }
+
+/* ─── Guess table ─── */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.guess-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  table-layout: fixed;
+}
+
+.guess-table thead th {
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.guess-table thead th:first-child { text-align: left; }
+
+/* ─── Cells ─── */
+.cell {
+  padding: 0.55rem 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.cell:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+  text-align: left;
+  padding-left: 0.75rem;
+}
+.cell:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+
+.cell-name {
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-type { font-weight: 700; font-size: 0.8rem; }
+
+.cell-correct { background: var(--correct); color: #fff; }
+.cell-wrong   { background: var(--wrong);   color: var(--text-muted); }
+.cell-higher  { background: var(--higher);  color: #fff; }
+.cell-lower   { background: var(--lower);   color: #fff; }
+.cell-na      { background: var(--na);      color: var(--text-muted); }
+
+.cell-value { display: inline-block; }
+.cell-arrow { display: inline-block; margin-left: 3px; font-size: 0.9em; }
+
+.guess-row { animation: row-pop 0.25s ease-out; }
+
+@keyframes row-pop {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Input ─── */
+.input-wrapper {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.input-form { width: 100%; }
+
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.autocomplete-container {
+  position: relative;
+  flex: 1;
+}
+
+.move-input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.move-input:focus { border-color: var(--accent); }
+.move-input:disabled { opacity: 0.5; cursor: not-allowed; }
+.move-input::placeholder { color: var(--text-muted); }
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  list-style: none;
+  z-index: 20;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.suggestion-item {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.suggestion-item:hover,
+.suggestion-item.active {
+  background: var(--surface2);
+  color: var(--accent);
+}
+
+.guess-btn {
+  padding: 0.65rem 1.2rem;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: opacity 0.15s, background 0.15s;
+}
+.guess-btn:hover:not(:disabled) { background: #c030d8; }
+.guess-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.input-error {
+  color: #f07070;
+  font-size: 0.82rem;
+  padding-left: 0.25rem;
+}
+
+/* ─── Modals ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.15s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.75rem;
+  max-width: 440px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  animation: modal-pop 0.2s ease;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.modal h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent2);
+}
+
+.modal p { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.modal-close:hover { color: var(--text); }
+
+.modal-note {
+  font-size: 0.8rem !important;
+  color: var(--text-muted) !important;
+  margin-top: 0.25rem;
+}
+
+/* ─── Legend ─── */
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.legend-cell {
+  min-width: 72px;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+/* ─── Result modal ─── */
+.result-modal { text-align: center; }
+
+.result-icon { font-size: 2.5rem; line-height: 1; }
+.result-modal h2 { color: var(--accent2); }
+
+.result-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.chip {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.chip-type { font-weight: 700; }
+
+/* ─── Responsive ─── */
+@media (max-width: 500px) {
+  .header-title { font-size: 1.2rem; }
+  .cell { font-size: 0.72rem; padding: 0.45rem 0.3rem; }
+  .cell-name { font-size: 0.7rem; }
+  .main { padding: 1rem 0.5rem 3rem; }
+}

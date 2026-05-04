@@ -1,0 +1,37 @@
+/* ─── Reset & Custom Properties ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #12121f;
+  --surface:     #1c1c30;
+  --surface2:    #252540;
+  --border:      #2e2e50;
+  --text:        #e8e8f0;
+  --text-muted:  #7878a0;
+  --correct:     #3a7d44;
+  --wrong:       #3a3a5c;
+  --higher:      #9a7a1a;
+  --lower:       #9a7a1a;
+  --na:          #252535;
+  --accent:      #e040fb;
+  --accent2:     #ffcb05;
+  --radius:      8px;
+  --font:        'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button { cursor: pointer; font-family: inherit; }
+
+#root { width: 100%; }
